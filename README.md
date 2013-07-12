@@ -1,4 +1,5 @@
-chisinau
-========
+InvasionJS
+==========
 
-game development in moldova for best summer course 2013
+A game made with melonJS.
+You control a spaceship and you must destroy all incoming aliens. Use arrow keys to move around and space key to pause.
