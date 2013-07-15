@@ -1,6 +1,9 @@
 
 var playerPos;
 var playerPosX;
+
+
+
 /*
  * missile entity
  */
@@ -94,25 +97,16 @@ var MissileEntity = me.ObjectEntity.extend(
 
 
 
-
-
-
-function gotoGO() {
-
-    me.state.change(me.state.HAPPYENDING);
-
-    
-}
-
 var PlayerEntity = me.ObjectEntity.extend(
 {
 
-    speed: 7, gameOverTimer: 0,
+    speed: 7, gameOverTimer: 0, currentLevel: 1,
 
     /*
     * constructor
     */
-    init: function (x, y) {
+    init: function (x, y, lvl) {
+        this.currentLevel = lvl;
         // call the parent constructor
         this.parent(x, y, { image: "ship" });
 
@@ -123,12 +117,10 @@ var PlayerEntity = me.ObjectEntity.extend(
         this.gravity = 0;
 
         // 5 Minute timeout start
-        endOfGameInterval = setTimeout(gotoGO, 60000);
 
         // enable collision
         this.collidable = true;
         this.updateColRect(8, 40, 10, 40);
-        me.game.HUD.updateItemValue("score", 5);
     },
 
 
@@ -136,6 +128,31 @@ var PlayerEntity = me.ObjectEntity.extend(
     * update the player pos
     */
     update: function () {
+        if (me.game.HUD.getItemValue("timer") <= 1 / me.sys.fps) {
+            console.log("FUCK THE FUCKING JAVASCRIPT MAN " + this.currentLevel);
+            me.game.HUD.updateItemValue("timer", 32);
+            if (this.currentLevel == 1) {
+                this.currentLevel += 1;
+                me.state.set(me.state.PLAY2, new PlayScreen2());
+                me.state.change(me.state.PLAY2);
+                return;
+            }
+            else if (this.currentLevel == 2) {
+                this.currentLevel+=1;
+                me.state.set(me.state.PLAY3, new PlayScreen3());
+                me.state.change(me.state.PLAY3);
+                return;
+            }
+            else if (this.currentLevel == 3) {
+                me.state.set(me.state.HAPPYENDING, new HappyEndingScreen());
+                me.state.change(me.state.HAPPYENDING);
+                return;
+
+            }
+        }
+        else
+            me.game.HUD.updateItemValue("timer", -1 / me.sys.fps);
+
         // move left
         if (me.input.isKeyPressed("left")) {
             // update the entity velocity
@@ -233,6 +250,7 @@ var PlayerEntity = me.ObjectEntity.extend(
 
                 // game over
 
+                me.state.set(me.state.GAMEOVER, new GameOverScreen ());
                 me.state.change(me.state.GAMEOVER);
 
                 me.game.HUD.getItemValue("score");
@@ -255,160 +273,8 @@ var PlayerEntity = me.ObjectEntity.extend(
 });
 
 var endOfGameInterval;
-/*
- * player entity
- */
-var PlayerEntity = me.ObjectEntity.extend(
-{
-
-    speed: 7, gameOverTimer: 0,
-    
-    /*
-    * constructor
-    */
-    init: function (x, y) {
-        // call the parent constructor
-        this.parent(x, y, { image: "ship" });
-
-        // set the default horizontal & vertical speed (accel vector)
-        this.setVelocity(this.speed, this.speed);
-
-        // init variables
-        this.gravity = 0;
-
-        // 5 Minute timeout start
-        endOfGameInterval = setTimeout(gotoGO, 60000);
-
-        // enable collision
-        this.collidable = true;
-        this.updateColRect(8, 40, 10, 40);
-        me.game.HUD.updateItemValue("score", 20);
-    },
 
 
-    /*
-    * update the player pos
-    */
-    update: function () {
-        // move left
-        if (me.input.isKeyPressed("left")) {
-            // update the entity velocity
-            this.vel.x -= this.accel.x * me.timer.tick;
-            if (this.pos.x < 0)
-                this.pos.x = 0;
-        }
-        // move right
-        else if (me.input.isKeyPressed("right")) {
-            // update the entity velocity
-            this.vel.x += this.accel.x * me.timer.tick;
-            if (this.pos.x > me.video.getWidth() - this.image.width)
-                this.pos.x = me.video.getWidth() - this.image.width;
-        }
-        else
-            this.vel.x = 0;
-
-        // move up
-        if (me.input.isKeyPressed("up")) {
-            // update the entity velocity
-            this.vel.y -= this.accel.y * me.timer.tick;
-            if (this.pos.y < 0)
-                this.pos.y = 0;
-        }
-        // move down
-        else if (me.input.isKeyPressed("down")) {
-            // update the entity velocity
-            this.vel.y += this.accel.y * me.timer.tick;
-            if (this.pos.y > me.video.getHeight() - this.image.height)
-                this.pos.y = me.video.getHeight() - this.image.height;
-        }
-        else
-            this.vel.y = 0;
-
-        // fire
-        if (me.input.isKeyPressed("fire")) {
-           
-            me.state.pause();
-
-            var resume_loop = setInterval(function check_resume() {
-                if (me.input.isKeyPressed("fire")) {
-                    clearInterval(resume_loop);
-                    me.state.resume();
-                }
-            }, 100);
-            
-
-        }
-
-        // check & update player movement
-        this.computeVelocity(this.vel);
-        this.pos.add(this.vel);
-        this.checkCollision();
-
-        // update animation if necessary
-        var updated = (this.vel.x != 0 || this.vel.y != 0);
-        
-        playerPos = this.pos.y;
-        playerPosX = this.pos.x;
-        return updated;
-    },
-
-    /*
-    * check collision
-    */
-    
-
-    checkCollision: function () {
-
-        var res = me.game.collide(this);
-
-
-
-        // if collided object is an enemy
-
-        if (res && res.obj.type == me.game.ENEMY_OBJECT) {
-
-            // play sound
-
-            me.audio.play("clash");
-
-            console.log("updating life indicator");
-
-            // update life indicator
-
-            me.game.HUD.updateItemValue("life", -1);
-
-
-
-            // if no more lives
-
-            if (me.game.HUD.getItemValue("life") <= 0)
-
-            {	
-
-                console.log("no more lifes");
-
-                // game over
-
-                me.state.change(me.state.GAMEOVER);
-
-                me.game.HUD.getItemValue("score");
-
-                return;
-
-            }
-
-
-
-            // remove enemy
-
-            me.game.remove(res.obj);
-
-        }
-
-    }
-
-   
-});
 
 /*
  * enemy entity
@@ -475,6 +341,7 @@ var EnemyEntity = me.ObjectEntity.extend(
 
                 // game over
 
+                me.state.set(me.state.GAMEOVER, new GameOverScreen());
                 me.state.change(me.state.GAMEOVER);
 
                 me.game.HUD.getItemValue("score");
@@ -571,7 +438,8 @@ var EnemyFleet = Object.extend(
 		    var x = me.video.getWidth() + 10;
                         
 		    // Select a position
-		    var n = Math.round (Number.prototype.random(0, me.video.getHeight() / this.spriteWidth) ) ;
+		    var n = Math.round(Number.prototype.random(0, (me.video.getHeight()-64) / this.spriteWidth));
+            // n is between
 		    var y = n * this.spriteWidth;
 
 			// Select how many enemies should spawn at that block
@@ -582,10 +450,12 @@ var EnemyFleet = Object.extend(
 
 			    // Select a new position
 			    var newPosY = y + i * (this.spriteWidth + 5);
-			    enemiesAdded[i] = new EnemyEntity(x, newPosY );
                 // If we are out of bounds
-			    //if (newPosY > this.maxY)
-			    //    continue;
+			    if (newPosY > me.video.height  || newPosY < 0)
+			        continue;
+
+
+                enemiesAdded[i] = new EnemyEntity(x, newPosY);
 
                 // Else, spawn the enemy
 			    me.game.add(enemiesAdded[i], 10);

@@ -42,30 +42,83 @@ var LifeObject = me.HUD_Item.extend(
  */
 var ScoreObject = me.HUD_Item.extend(
 {
-	/*
+    /*
 	 * constructor
 	 */
-	init: function()
-	{
-		// call the parent constructor
-		this.parent(5, 0);
+    init: function () {
+        // call the parent constructor
+        this.parent(5, 0);
 
-		// create a font
-		this.score = new me.Font("Verdana", 20, "white");
-	},
+        // create a font
+        this.score = new me.Font("Verdana", 20, "white");
+    },
 
-	/*
+    /*
 	 * draw score
 	 */
-	draw: function(context, x, y)
-	{
-		var scoreText = "Score : " + this.value;
-		var scoreSize = this.score.measureText(context, scoreText);
+    draw: function (context, x, y) {
+        var scoreText = "Planet's Defenses: " + this.value;
+        var scoreSize = this.score.measureText(context, scoreText);
 
-		this.score.draw(context, scoreText, this.pos.x, scoreSize.height);
-	}
+        this.score.draw(context, scoreText, this.pos.x, scoreSize.height+30);
+        
+
+    }
 });
 
+/*
+ * HUD score item
+ */
+var LevelObject = me.HUD_Item.extend(
+{
+    /*
+	 * constructor
+	 */
+    init: function () {
+        // call the parent constructor
+        this.parent(5, 0);
+
+        // create a font
+        this.timer = new me.Font("Verdana", 20, "white");
+    },
+
+    /*
+	 * draw timer
+	 */
+    draw: function (context, x, y) {
+        var timerText = "Attack Wave " + Math.round(this.value * 100) / 100 + "/3";
+        var timerSize = this.timer.measureText(context, timerText);
+
+        this.timer.draw(context, timerText, this.pos.x, timerSize.height + 60);
+    }
+});
+
+/*
+ * HUD score item
+ */
+var TimerObject = me.HUD_Item.extend(
+{
+    /*
+	 * constructor
+	 */
+    init: function () {
+        // call the parent constructor
+        this.parent(5, 0);
+
+        // create a font
+        this.timer = new me.Font("Verdana", 20, "white");
+    },
+
+    /*
+	 * draw timer
+	 */
+    draw: function (context, x, y) {
+        var timerText = "Survive for another: " + Math.round(this.value * 100) / 100 + "''";
+        var timerSize = this.timer.measureText(context, timerText);
+
+        this.timer.draw(context, timerText, this.pos.x, timerSize.height);
+    }
+});
 /*
  * draw a button on screen
  */

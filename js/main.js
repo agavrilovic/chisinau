@@ -35,6 +35,7 @@ var g_resources = [
 	{name: "implosion", type:"image", src: "img/implosion.png"},
 
 	// audio
+	{ name: "nextlevel", type: "audio", src: "sound/", channel: 1 },
 	{name: "clash", type:"audio", src: "sound/", channel: 1},
 	{ name: "missile", type: "audio", src: "sound/", channel: 1 },
 	{ name: "implosion", type: "audio", src: "sound/", channel: 1 },
@@ -168,27 +169,35 @@ var jsApp =
 	 */
 	loaded: function ()
 	{
+
+        /*
 	    // set the "Menu" Screen Object
-	    me.state.set(me.state.MENU, new MenuScreen());
-
-
-	    // set the "Play" Screen Object
-		me.state.set(me.state.PLAY, new PlayScreen());
-		// set the "Game over" Screen Object
-		me.state.set(me.state.GAMEOVER, new GameOverScreen());
+	    me.state.set(me.state.MENU, new me.game.MenuScreen());
+        
 
 	    // set the "HappyEnding" Screen Object
-		me.state.set(me.state.HAPPYENDING, new HappyEndingScreen());
+	    me.state.set(me.state.HAPPYENDING, new me.game.HappyEndingScreen());
+
+	    // set the "Play" Screen Object
+	    me.state.set(me.state.PLAY, new me.game.PlayScreen());
+
 
 	    // set the "Story" Screen Object
-		me.state.set(me.state.STORY, new StoryScreen());
+	    me.state.set(me.state.STORY, new me.game.StoryScreen());
+
+	    // set the "Game over" Screen Object
+	    me.state.set(me.state.GAMEOVER, new me.game.GameOverScreen());
+        */
+
+
+
 
 		// set a global fading transition for the screen
 		me.state.transition("fade", "#FFFFFF", 250);
 
 		// disable transition for MENU and GAMEOVER screen
-		me.state.setTransition(me.state.MENU, false);
-		me.state.setTransition(me.state.GAMEOVER, false);
+		//me.state.setTransition(me.state.MENU, false);
+		//me.state.setTransition(me.state.GAMEOVER, false);
 
 		// enable the keyboard
 		me.input.bindKey(me.input.KEY.LEFT, "left");
@@ -197,10 +206,10 @@ var jsApp =
 		me.input.bindKey(me.input.KEY.DOWN, "down");
 		me.input.bindKey(me.input.KEY.SPACE, "fire", true);
 
-		// draw menu
-	    me.state.change(me.state.MENU);
-
-		//me.state.change(me.state.PLAY);
+	    // draw menu
+		me.state.set(me.state.MENU, new MenuScreen());
+		me.state.change(me.state.MENU);
+	    //me.state.change(me.state.PLAY);
 	}
 }; // jsApp
 

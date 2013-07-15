@@ -1,3 +1,9 @@
+var LoadingScreen;
+var MenuScreen;
+var HappyEndingScreen;
+var GameOverScreen;
+var PlayScreen;
+
 /*
  * loading screen
  */
@@ -61,7 +67,8 @@ var MenuScreen = me.ScreenObject.extend(
 		// load title image
 		this.title = me.loader.getImage("title");
 
-		// play button
+	    // play button
+		me.state.set(me.state.STORY, new StoryScreen());
 		this.play = new Button("play", me.state.STORY, 280);
 
 		// version
@@ -102,44 +109,163 @@ var MenuScreen = me.ScreenObject.extend(
  */
 var PlayScreen = me.ScreenObject.extend(
 {
-	/*
+    /*
 	 * action to perform when game starts
 	 */
-	onResetEvent: function()
-	{
-		// add a default HUD
-		me.game.addHUD(0, 0, me.video.getWidth(), 45);
+    onResetEvent: function () {
+        // add a default HUD
+        me.game.addHUD(0, 0, me.video.getWidth(), 90);
 
-		// add a new HUD item
-		me.game.HUD.addItem("life", new LifeObject(3));
+        // add a new HUD item
+        me.game.HUD.addItem("life", new LifeObject(3));
 
-		// add a new HUD item
-		me.game.HUD.addItem("score", new ScoreObject());
+        // add a new HUD item
+        me.game.HUD.addItem("score", new ScoreObject());
 
-		// add parallax background
-		me.game.add(new BackgroundObject(), 1);
+        // add a new HUD item
+        me.game.HUD.addItem("timer", new TimerObject());
 
-		// add main player
-		var ship = new PlayerEntity(100, 265);
-		me.game.add(ship, 10);
+        // add a new HUD item
+        me.game.HUD.addItem("level", new LevelObject());
 
-		me.audio.playTrack("background");
+        me.game.HUD.updateItemValue("score", 8);
+        me.game.HUD.updateItemValue("timer", 12);
+        me.game.HUD.updateItemValue("level", 1);
+
+        // add parallax background
+        me.game.add(new BackgroundObject(), 1);
+
+        // add main player
+        var ship = new PlayerEntity(100, 265, 1);
+        me.game.add(ship, 10);
+
+        me.audio.playTrack("background");
 
 
-		// add enemy fleet
-		me.game.add(new EnemyFleet(), 10);
+        // add enemy fleet
+        me.game.add(new EnemyFleet(), 10);
 
-		// make sure everything is in the right order
-		me.game.sort();
-	},
+        // make sure everything is in the right order
+        me.game.sort();
+    },
 
     /*
      * action to perform when game is finished (state change)
      */
-	onDestroyEvent: function() {
-		// remove the HUD
-		me.game.disableHUD();
-	}
+    onDestroyEvent: function () {
+        // remove the HUD
+        me.game.disableHUD();
+    }
+});
+
+/*
+ * play screen
+ */
+var PlayScreen2 = me.ScreenObject.extend(
+{
+    /*
+	 * action to perform when game starts
+	 */
+    onResetEvent: function () {
+        // add a default HUD
+        me.game.addHUD(0, 0, me.video.getWidth(), 90);
+
+        // add a new HUD item
+        me.game.HUD.addItem("life", new LifeObject(3));
+
+        // add a new HUD item
+        me.game.HUD.addItem("score", new ScoreObject());
+
+        // add a new HUD item
+        me.game.HUD.addItem("timer", new TimerObject());
+        // add a new HUD item
+        me.game.HUD.addItem("level", new LevelObject());
+
+        me.game.HUD.updateItemValue("score", 15);
+        me.game.HUD.updateItemValue("timer", 20);
+        me.game.HUD.updateItemValue("level", 2);
+
+        // add parallax background
+        me.game.add(new BackgroundObject(), 1);
+
+        // add main player
+        var ship = new PlayerEntity(100, 265, 2);
+        me.game.add(ship, 10);
+
+        //me.audio.playTrack("background");
+
+        me.audio.play("nextlevel");
+
+
+        // add enemy fleet
+        me.game.add(new EnemyFleet(), 10);
+
+        // make sure everything is in the right order
+        me.game.sort();
+    },
+
+    /*
+     * action to perform when game is finished (state change)
+     */
+    onDestroyEvent: function () {
+        // remove the HUD
+        me.game.disableHUD();
+    }
+});
+
+/*
+ * play screen
+ */
+var PlayScreen3 = me.ScreenObject.extend(
+{
+    /*
+	 * action to perform when game starts
+	 */
+    onResetEvent: function () {
+        // add a default HUD
+        me.game.addHUD(0, 0, me.video.getWidth(), 90);
+
+        // add a new HUD item
+        me.game.HUD.addItem("life", new LifeObject(3));
+
+        // add a new HUD item
+
+        me.game.HUD.addItem("score", new ScoreObject());
+
+        // add a new HUD item
+        me.game.HUD.addItem("timer", new TimerObject());
+        // add a new HUD item
+        me.game.HUD.addItem("level", new LevelObject());
+
+        me.game.HUD.updateItemValue("score", 24);
+        me.game.HUD.updateItemValue("timer", 30);
+        me.game.HUD.updateItemValue("level", 3);
+
+        // add parallax background
+        me.game.add(new BackgroundObject(), 1);
+
+        // add main player
+        var ship = new PlayerEntity(100, 265, 3);
+        me.game.add(ship, 10);
+
+        //me.audio.playTrack("background");
+
+
+        me.audio.play("nextlevel");
+        // add enemy fleet
+        me.game.add(new EnemyFleet(), 10);
+
+        // make sure everything is in the right order
+        me.game.sort();
+    },
+
+    /*
+     * action to perform when game is finished (state change)
+     */
+    onDestroyEvent: function () {
+        // remove the HUD
+        me.game.disableHUD();
+    }
 });
 
 /* 
@@ -222,8 +348,9 @@ var HappyEndingScreen = me.ScreenObject.extend(
 	 */
     init: function () {
         // call parent constructor
+        me.game.disableHUD();
         this.parent(true, true);
-
+        
         // init stuff
         this.end = null;
         //this.score = null;
@@ -231,7 +358,7 @@ var HappyEndingScreen = me.ScreenObject.extend(
         this.menu = null;
         this.finalScore = null;
     },
-
+    
     /*
 	 * reset function
 	 */
@@ -314,6 +441,18 @@ var HappyEndingScreen = me.ScreenObject.extend(
     }
 });
 
+
+
+
+function GoNext() {
+    me.state.set(me.state.PLAY1, new PlayScreen2());
+    me.state.change(me.state.PLAY1)
+}
+
+
+
+
+
 var StoryScreen = me.ScreenObject.extend(
 {
     init: function () {
@@ -336,6 +475,7 @@ var StoryScreen = me.ScreenObject.extend(
         me.input.bindKey(me.input.KEY.ENTER, "enter");
         me.input.bindKey(me.input.KEY.ESC, "esc");
 
+        
         // game over sound
         // me.audio.play("gameover");
     },
@@ -348,10 +488,11 @@ var StoryScreen = me.ScreenObject.extend(
     update: function () {
 
         if (this.picturenumber < 44) {
-            this.picturenumber += 0.2;
+            this.picturenumber += 0.05;
         }
         else {
             //this.picturenumber = 0;
+            me.state.set(me.state.PLAY, new PlayScreen());
             me.state.change(me.state.PLAY);
         }
         return true;
